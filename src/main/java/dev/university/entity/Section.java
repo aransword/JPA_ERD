@@ -4,11 +4,15 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
+@IdClass(SectionId.class)
+@Builder
 @Getter
-@Setter
-@IdClass(Section.SectionID.class)
+@NoArgsConstructor
+@AllArgsConstructor
 public class Section {
     // 🌟 1. PK이면서 동시에 FK인 경우 (@Id와 @ManyToOne을 같이 씁니다)
     @Id
@@ -39,13 +43,7 @@ public class Section {
     @Column(name = "time_slot_id")
     private String timeSlotId;
 
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @EqualsAndHashCode
-    public static class SectionID implements Serializable {
-        private String course_id;
-        private String sec_id;
-        private String semester;
-        private int year;
-    }
+    @OneToMany(mappedBy = "section")
+    @Builder.Default
+    private List<Takes> takes = new ArrayList<>();
 }
