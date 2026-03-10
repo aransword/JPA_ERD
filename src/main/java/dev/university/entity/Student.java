@@ -1,11 +1,13 @@
 package dev.university.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.util.ArrayList;
 
 @Entity
 @Table(name = "student")
+@Getter
 public class Student {
 
     @Id
