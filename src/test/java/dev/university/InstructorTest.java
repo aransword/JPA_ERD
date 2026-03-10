@@ -1,7 +1,7 @@
 package dev.university;
 
 import dev.university.dto.InstructorScheduleDto;
-import dev.university.service.InstructorService; // 서비스 임포트
+import dev.university.service.InstructorService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
