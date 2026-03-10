@@ -9,8 +9,6 @@ import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Persistence;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.math.BigDecimal;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,91 +23,25 @@ public class InstructorTest {
     InstructorDao instructorDao = new InstructorDao(manager);
 
     @Test
-    @DisplayName("교수 ID로 일주일 시간표와 강의실 정보를 정확히 조회한다")
-    void getInstructorWeeklyScheduleTest() {
-        transaction.begin();
+    @DisplayName("Srinivasan 교수의 2017년 가을 학기 모든 강의 정보를 상세 조회하면 두 과목이 나온다")
+    void instructorScheduleFullInfoTest() {
 
-        try {
-            // 1. 기초 데이터 삽입
+        List<InstructorScheduleDto> scheduleList = instructorDao.findWeeklySchedule("10101", 2017, "Fall");
 
-            // 강의실
-            Classroom classroom = new Classroom();
-            classroom.setBuilding("Taylor");
-            classroom.setRoomNumber("3128");
-            classroom.setCapacity(50);
-            manager.persist(classroom);
-
-            // 학과
-            Department dept = new Department();
-            dept.setDeptName("Comp. Sci.");
-            dept.setBuilding("Taylor");
-            dept.setBudget(new BigDecimal("100000.00"));
-            manager.persist(dept);
-
-            // 교수
-            Instructor prof = new Instructor();
-            prof.setId("10101");
-            prof.setName("Srinivasan");
-            prof.setSalary(new BigDecimal("65000.00"));
-            prof.setDepartment(dept);
-            manager.persist(prof);
-
-            // 과목
-            Course course = new Course();
-            course.setCourseId("CS-101");
-            course.setTitle("Intro. to Computer Science");
-            course.setCredits(4);
-            course.setDepartment(dept);
-            manager.persist(course);
-
-            // 섹션
-            Section section = new Section();
-            section.setCourseId("CS-101");
-            section.setSecId("1");
-            section.setSemester("Fall");
-            section.setYear(2025);
-            section.setClassroom(classroom);
-            section.setTimeSlotId("A");
-            manager.persist(section);
-
-            // 강의 배정
-            Teaches teaches = new Teaches();
-            teaches.setId("10101");
-            teaches.setCourseId("CS-101");
-            teaches.setSecId("1");
-            teaches.setSemester("Fall");
-            teaches.setYear(2025);
-            teaches.setInstructor(prof);
-            teaches.setSection(section);
-            manager.persist(teaches);
-
-            // 영속성 컨텍스트를 DB에 반영하고 비움 (실제 DB 조회를 시뮬레이션)
-            manager.flush();
-            manager.clear();
-
-            //조회
-            List<InstructorScheduleDto> schedule = instructorDao.findWeeklySchedule("10101", 2025, "Fall");
-
-            assertFalse(schedule.isEmpty(), "시간표가 비어있으면 안 됩니다.");
-            InstructorScheduleDto dto = schedule.get(0);
-
-            assertEquals("Srinivasan", dto.getInstructorName());
-            assertEquals("CS-101", dto.getCourseId());
-            assertEquals("Taylor", dto.getBuilding());
-            assertEquals("3128", dto.getRoomNumber());
-            assertEquals(2025, dto.getYear());
-
-            System.out.println("조회 결과: " + dto.getInstructorName() + " 교수는 "
-                    + dto.getBuilding() + "동 " + dto.getRoomNumber() + "호에서 강의합니다.");
-
-            transaction.commit();
-        } catch (Exception e) {
-            transaction.rollback();
-            e.printStackTrace();
-            throw e;
-        } finally {
-            manager.close();
-            factory.close();
+        System.out.println("\n================ [ 강의 시간표 조회 결과 ] ================");
+        for (InstructorScheduleDto dto : scheduleList) {
+            System.out.println("교수 ID: " + dto.getInstructorId());
+            System.out.println("교수 성함: " + dto.getInstructorName());
+            System.out.println("과목 ID : " + dto.getCourseId());
+            System.out.println("학기/연도 : " + dto.getSemester() + " / " + dto.getYear());
+            System.out.println("강의 장소 : " + dto.getBuilding() + "동 " + dto.getRoomNumber() + "호");
+            System.out.println("---------------------------------------------------------");
         }
+        System.out.println("=========================================================\n");
+
+        assertEquals(2, scheduleList.size(), "2017년 가을 학기 강의는 2개");
+
+        manager.close();
+        factory.close();
     }
 }

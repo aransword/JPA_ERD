@@ -12,9 +12,9 @@ public class InstructorDao {
     }
 
     public List<InstructorScheduleDto> findWeeklySchedule(String instructorId, Integer year, String semester) {
-        // 교수(Instructor) -> 강의배정(Teaches) -> 섹션(Section) 조인
         String jpql = "SELECT new dev.university.dto.InstructorScheduleDto(" +
-                "i.id, i.name, t.courseId, t.semester, t.year, s.building, s.roomNumber) " +
+                "i.id, i.name, t.courseId, t.semester, t.year, " +
+                "s.classroom.building, s.classroom.roomNumber) " +
                 "FROM Teaches t " +
                 "JOIN t.instructor i " +
                 "JOIN t.section s " +
