@@ -11,6 +11,8 @@ import java.io.Serializable;
 @Entity
 @Getter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @IdClass(Classroom.ClassroomID.class)
 public class Classroom {
     @Id
