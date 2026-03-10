@@ -22,6 +22,7 @@ public class Classroom {
 
     private int capacity;
 
+
     @NoArgsConstructor
     @AllArgsConstructor
     @EqualsAndHashCode
