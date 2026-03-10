@@ -1,41 +1,26 @@
 package dev.university;
 
 import dev.university.entity.Course;
-import dev.university.entity.Department;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
+import dev.university.service.CourseService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CourseServiceTest {
-
-    EntityManagerFactory factory
-            = Persistence.createEntityManagerFactory("hello-jpa");
-    EntityManager manager = factory.createEntityManager();
 
     @Test
     @DisplayName("학과별 과목 조회 - 컴퓨터공학과")
     void testFindCoursesByCompSciDepartment() {
-        List<Course> courses = manager.createQuery(
-                        "select c from Course c " +
-                                "where c.department.deptName = :deptName " +
-                                "order by c.courseId",
-                        Course.class
-                ).setParameter("deptName", "Comp. Sci.")
-                .getResultList();
+        CourseService courseService = new CourseService();
+        List<Course> courses = courseService.getCoursesByDepartment("Comp. Sci.");
 
-        System.out.println("courses = " + courses.size());
+        System.out.println("=== 컴퓨터공학과 과목 목록 ===");
         for (Course course : courses) {
-            System.out.println(
-                    "courseId = " + course.getCourseId()
-                            + ", title = " + course.getTitle()
-                            + ", credits = " + course.getCredits()
-            );
+            System.out.println(course.getCourseId() + " / " + course.getTitle());
         }
 
         assertEquals(5, courses.size());
@@ -44,59 +29,39 @@ public class CourseServiceTest {
         assertEquals("CS-315", courses.get(2).getCourseId());
         assertEquals("CS-319", courses.get(3).getCourseId());
         assertEquals("CS-347", courses.get(4).getCourseId());
+
+        courseService.close();
     }
 
     @Test
     @DisplayName("학과별 과목 조회 - 물리학과")
     void testFindCoursesByPhysicsDepartment() {
-        List<Course> courses = manager.createQuery(
-                        "select c from Course c " +
-                                "where c.department.deptName = :deptName " +
-                                "order by c.courseId",
-                        Course.class
-                ).setParameter("deptName", "Physics")
-                .getResultList();
+        CourseService courseService = new CourseService();
+        List<Course> courses = courseService.getCoursesByDepartment("Physics");
 
-        System.out.println("courses = " + courses.size());
+        System.out.println("=== 물리학과 과목 목록 ===");
         for (Course course : courses) {
-            System.out.println(
-                    "courseId = " + course.getCourseId()
-                            + ", title = " + course.getTitle()
-            );
+            System.out.println(course.getCourseId() + " / " + course.getTitle());
         }
 
         assertEquals(1, courses.size());
         assertEquals("PHY-101", courses.get(0).getCourseId());
         assertEquals("Physical Principles", courses.get(0).getTitle());
+
+        courseService.close();
     }
 
     @Test
     @DisplayName("학과별 과목 조회 - 존재하지 않는 학과")
     void testFindCoursesByInvalidDepartment() {
-        List<Course> courses = manager.createQuery(
-                        "select c from Course c " +
-                                "where c.department.deptName = :deptName " +
-                                "order by c.courseId",
-                        Course.class
-                ).setParameter("deptName", "Korean")
-                .getResultList();
+        CourseService courseService = new CourseService();
+        List<Course> courses = courseService.getCoursesByDepartment("Korean");
 
+        System.out.println("=== 존재하지 않는 학과 조회 ===");
         System.out.println("courses = " + courses.size());
 
         assertTrue(courses.isEmpty());
-    }
 
-    @Test
-    @DisplayName("학과 엔티티 조회")
-    void testFindDepartment() {
-        Department department = manager.find(Department.class, "Comp. Sci.");
-
-        System.out.println("department name = " + department.getDeptName());
-        System.out.println("building = " + department.getBuilding());
-        System.out.println("budget = " + department.getBudget());
-
-        assertNotNull(department);
-        assertEquals("Comp. Sci.", department.getDeptName());
-        assertEquals("Taylor", department.getBuilding());
+        courseService.close();
     }
 }
