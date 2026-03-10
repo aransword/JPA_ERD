@@ -26,6 +26,8 @@ src/main/java/dev/university/
 ```
 
 ## ERD 엔티티 관계
+공개 데이터셋인 University Database를 사용하였습니다
+(출처 : https://www.db-book.com/university-lab-dir/sample_tables-dir/index.html )
 
 ```mermaid
 erDiagram
@@ -229,16 +231,16 @@ CourseService
 
 ```
 InstructorService
-  └─ InstructorDao.findWeeklySchedule(instructorId, year, semester)
-       └─ JPQL: SELECT new InstructorScheduleDto(...)
-                FROM Teaches t JOIN t.instructor i JOIN t.section s
+  └─ 1. InstructorDao.findWeeklySchedule(instructorId, year, semester)
+       └─ JPQL: SELECT t FROM Teaches t 
+                JOIN FETCH t.instructor i JOIN FETCH t.section s
                 WHERE i.id = :id AND t.year = :year AND t.semester = :semester
+  └─ 2. List<Teaches> 엔티티 결과를 Stream을 사용하여 InstructorScheduleDto로 변환
 ```
 
 1. `InstructorDao`는 외부에서 `EntityManager`를 주입받는 방식
-2. **JPQL `SELECT new` 문법**을 사용하여 조회 결과를 `InstructorScheduleDto`로 **직접 프로젝션** (DTO Projection)
-3. `Teaches` → `Instructor`, `Teaches` → `Section`을 **명시적 JOIN**으로 연결하여, 교수명·과목ID·강의 장소를 한 번의 쿼리로 조회
-4. 별도의 DTO 변환 로직 없이 JPA가 JPQL 결과를 바로 DTO 생성자에 매핑
+2. **JPQL FETCH JOIN**을 사용하여 Teaches, Instructor, Section 엔티티를 한 번의 쿼리로 조회
+3. Service 레이어에서 Entity를 DTO로 변환하여 반환
 
 ---
 
