@@ -6,11 +6,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
 @Entity
+@Getter
 @IdClass(Classroom.ClassroomID.class)
 public class Classroom {
     @Id
