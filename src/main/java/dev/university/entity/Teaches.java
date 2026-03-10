@@ -5,9 +5,10 @@ import lombok.*;
 import java.io.Serializable;
 
 @Entity
+@Builder
 @Getter
-@Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @IdClass(Teaches.TeachesId.class)
 public class Teaches {
 
