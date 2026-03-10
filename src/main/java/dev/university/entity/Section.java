@@ -1,13 +1,13 @@
 package dev.university.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 
 @Entity
+@Getter
+@Setter
 @IdClass(Section.SectionID.class)
 public class Section {
     // 🌟 1. PK이면서 동시에 FK인 경우 (@Id와 @ManyToOne을 같이 씁니다)
